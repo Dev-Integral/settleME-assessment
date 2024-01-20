@@ -25,17 +25,12 @@ const TransferForm = ({ selectedUser }) => {
     const postData = { ...input, amount: discountedAmount };
     axios
       .post("https://jsonplaceholder.typicode.com/posts", postData)
-      .then((response) => {
+      .then(() => {
         alert(
-            `Transfer of ${input.amount} from ${input.sourceAccount} to ${input.destinationAccount} successful`
-          );
+          `Transfer of ${input.amount} from ${input.sourceAccount} to ${input.destinationAccount} successful`
+        )
+        .catch(()=> alert("Unable to transfer to recipient."));
       });
-    axios.post(`${"https://jsonplaceholder.typicode.com/posts"}`).then((response) => {
-      alert(
-        `Transfer of ${input.amount} from ${input.sourceAccount} to ${input.destinationAccount} successful`
-      );
-    });
-    //
   };
   return (
     <div className="max-w-[43vw] mx-auto bg-white rounded-lg mt-6 p-4 pr-8 pl-8 text-black">
