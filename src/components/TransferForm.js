@@ -10,9 +10,28 @@ const TransferForm = ({ selectedUser }) => {
     destinationBank: "",
     amount: "",
   });
+  const [inputError, setInputError] = useState({
+    sourceAccount: false,
+    destinationAccount: false,
+    destinationBank: false,
+    amount: false,
+  });
   const [discountValue, setDiscountValue] = useState(0);
   const handLeInput = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
+    setInputError({ ...inputError, [e.target.name]: false });
+  };
+  const validateInputs = () => {
+    let instance = {};
+    let isInvalid = [];
+    Object.keys(input).forEach((field) => {
+      if (!input[`${field}`]) {
+        instance[`${field}`] = true;
+        isInvalid.push(field);
+        setInputError(instance);
+      }
+    });
+    return isInvalid.length > 0 ? false : true;
   };
   const handleSubmit = () => {
     setDiscountValue(calculateDiscount(selectedUser));
@@ -23,14 +42,19 @@ const TransferForm = ({ selectedUser }) => {
         input?.amount * Number(calculateDiscount(selectedUser) / 100);
     }
     const postData = { ...input, amount: discountedAmount };
-    axios
-      .post("https://jsonplaceholder.typicode.com/posts", postData)
-      .then(() => {
-        alert(
-          `Transfer of ${input.amount} from ${input.sourceAccount} to ${input.destinationAccount} successful`
-        )
-        .catch(()=> alert("Unable to transfer to recipient."));
-      });
+    let isReady = validateInputs();
+    if (isReady) {
+      axios
+        .post("https://jsonplaceholder.typicode.com/posts", postData)
+        .then(() => {
+          alert(
+            `Transfer of ${input.amount} from ${input.sourceAccount} to ${input.destinationAccount} successful`
+          );
+        })
+        .catch(() => alert("Unable to transfer to recipient."));
+    } else {
+        alert("INVALID FORM FIELD(S)")
+    }
   };
   return (
     <div className="max-w-[43vw] mx-auto bg-white rounded-lg mt-6 p-4 pr-8 pl-8 text-black">
@@ -47,6 +71,9 @@ const TransferForm = ({ selectedUser }) => {
             {Number(selectedUser.balance).toLocaleString("en-US")}
           </option>
         </select>
+        {inputError.sourceAccount && (
+            <p className="text-[red] text-sm">Invalid selection</p>
+          )}
       </div>
       <div className="flex justify-between gap-4 mb-3">
         <div className="w-full">
@@ -58,6 +85,9 @@ const TransferForm = ({ selectedUser }) => {
             name="destinationAccount"
             onChange={handLeInput}
           />
+          {inputError.destinationAccount && (
+            <p className="text-[red] text-sm">Invalid Account </p>
+          )}
         </div>
         <div className="w-full">
           <p className="font-bold">Destination Account Bank</p>
@@ -73,6 +103,9 @@ const TransferForm = ({ selectedUser }) => {
               </option>
             ))}
           </select>
+          {inputError.destinationBank && (
+            <p className="text-[red] text-sm">Invalid Bank</p>
+          )}
         </div>
       </div>
       <div className="mb-3">
@@ -88,6 +121,9 @@ const TransferForm = ({ selectedUser }) => {
           <p className="mt-1">Discount Value: {discountValue}%</p>
         ) : null}
         {Number(input.amount) > Number(selectedUser?.balance) && (
+          <p className="text-[red] text-sm">Invalid Amount</p>
+        )}
+        {inputError.amount && (
           <p className="text-[red] text-sm">Invalid Amount</p>
         )}
       </div>
