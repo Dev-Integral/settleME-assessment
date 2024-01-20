@@ -34,12 +34,12 @@ const TransferForm = ({ selectedUser }) => {
     return isInvalid.length > 0 ? false : true;
   };
   const handleSubmit = () => {
-    setDiscountValue(calculateDiscount(selectedUser));
+    setDiscountValue(calculateDiscount(selectedUser, input.amount));
     let discountedAmount;
-    if (Number(calculateDiscount(selectedUser) > 0)) {
+    if (Number(calculateDiscount(selectedUser, input.amount) > 0)) {
       discountedAmount =
         input.amount -
-        input?.amount * Number(calculateDiscount(selectedUser) / 100);
+        input?.amount * Number(calculateDiscount(selectedUser, input.amount) / 100);
     }
     const postData = { ...input, amount: discountedAmount };
     let isReady = validateInputs();

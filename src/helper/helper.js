@@ -36,7 +36,8 @@ export const calculateDiscount = (selectedUser, amount) => {
             new Date().getMonth() + 1 &&
           Number(record?.txnDate?.split("-")[0]) === new Date().getFullYear() &&
           Number(record.amount) >= 50000 &&
-          selectedUser.accountType === "retail"
+          selectedUser.accountType === "retail" &&
+          amount >= 50000
         ) {
           count += 1;
         }
@@ -46,7 +47,8 @@ export const calculateDiscount = (selectedUser, amount) => {
             new Date().getMonth() + 1 &&
           Number(record?.txnDate?.split("-")[0]) === new Date().getFullYear() &&
           Number(record.amount) >= 150000 &&
-          selectedUser.accountType === "business"
+          selectedUser.accountType === "business" &&
+          amount >= 150000
         ) {
           count += 1;
         }
