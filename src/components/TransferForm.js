@@ -14,7 +14,7 @@ const TransferForm = ({ selectedUser }) => {
   };
   const handleSubmit = () => {
     let discountValue = calculateDiscount(selectedUser);
-    console.log(input);
+    console.log(discountValue);
 
     alert(
       `Transfer of ${input.amount} from ${input.sourceAccount} to ${input.destinationAccount} successful`
