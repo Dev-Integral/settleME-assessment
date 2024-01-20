@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BankList } from "../utils/Banklist";
 import { calculateDiscount } from "../helper/helper";
+import axios from "axios";
 
 const TransferForm = ({ selectedUser }) => {
   const [input, setInput] = useState({
@@ -9,16 +10,32 @@ const TransferForm = ({ selectedUser }) => {
     destinationBank: "",
     amount: "",
   });
+  const [discountValue, setDiscountValue] = useState(0);
   const handLeInput = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
   const handleSubmit = () => {
-    let discountValue = calculateDiscount(selectedUser);
-    console.log(discountValue);
-
-    alert(
-      `Transfer of ${input.amount} from ${input.sourceAccount} to ${input.destinationAccount} successful`
-    );
+    setDiscountValue(calculateDiscount(selectedUser));
+    let discountedAmount;
+    if (Number(calculateDiscount(selectedUser) > 0)) {
+      discountedAmount =
+        input.amount -
+        input?.amount * Number(calculateDiscount(selectedUser) / 100);
+    }
+    const postData = { ...input, amount: discountedAmount };
+    axios
+      .post("https://jsonplaceholder.typicode.com/posts", postData)
+      .then((response) => {
+        alert(
+            `Transfer of ${input.amount} from ${input.sourceAccount} to ${input.destinationAccount} successful`
+          );
+      });
+    axios.post(`${"https://jsonplaceholder.typicode.com/posts"}`).then((response) => {
+      alert(
+        `Transfer of ${input.amount} from ${input.sourceAccount} to ${input.destinationAccount} successful`
+      );
+    });
+    //
   };
   return (
     <div className="max-w-[43vw] mx-auto bg-white rounded-lg mt-6 p-4 pr-8 pl-8 text-black">
@@ -72,6 +89,12 @@ const TransferForm = ({ selectedUser }) => {
           name="amount"
           onChange={handLeInput}
         />
+        {discountValue ? (
+          <p className="mt-1">Discount Value: {discountValue}%</p>
+        ) : null}
+        {Number(input.amount) > Number(selectedUser?.balance) && (
+          <p className="text-[red] text-sm">Invalid Amount</p>
+        )}
       </div>
       <div className="flex items-center justify-center mt-4 mb-2">
         <button

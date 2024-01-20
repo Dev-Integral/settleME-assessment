@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import TransactionType from "./components/TransactionType";
 import TransferForm from "./components/TransferForm";
 import AirtimeForm from "./components/AirtimeForm";
@@ -10,7 +10,7 @@ function App() {
 
   const handleUser =(e) => setSelectedUser(SampleUsers[e.target.value])
   return (
-    <div className="bg-[#303030] text-white h-screen p-6">
+    <div className="bg-[#303030] text-white h-screen p-4">
       <div className="md:flex justify-between items-center">
         <h1 className=" text-xl mb-2">
           Welcome back, <b>{selectedUser.name.split(" ")[0]}</b>
