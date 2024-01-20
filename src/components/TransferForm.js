@@ -41,12 +41,15 @@ const TransferForm = ({ selectedUser }) => {
         input.amount -
         input?.amount * Number(calculateDiscount(selectedUser, input.amount) / 100);
     }
-    const postData = { ...input, amount: discountedAmount };
+    const postData = { ...input, discountedAmount: discountedAmount };
+    console.log(discountedAmount)
     let isReady = validateInputs();
     if (isReady) {
       axios
         .post("https://jsonplaceholder.typicode.com/posts", postData)
         .then(() => {
+            setInput({});
+            setDiscountValue(0);
           alert(
             `Transfer of ${input.amount} from ${input.sourceAccount} to ${input.destinationAccount} successful`
           );
@@ -115,6 +118,7 @@ const TransferForm = ({ selectedUser }) => {
           placeholder="Enter transfer amount"
           type="number"
           name="amount"
+          value={input.amount}
           onChange={handLeInput}
         />
         {discountValue ? (

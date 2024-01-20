@@ -1,7 +1,24 @@
+import { useState } from "react";
 import { AirtimeList } from "../utils/AirtimeProviders";
 
-const AirtimeForm = ({selectedUser}) => {
-  
+const AirtimeForm = ({ selectedUser }) => {
+  const [input, setInput] = useState({
+    sourceAccount: "",
+    phoneNumber: "",
+    networkProvider: "",
+    amount: "",
+  });
+  const [inputError, setInputError] = useState({
+    sourceAccount: false,
+    phoneNumber: false,
+    networkProvider: false,
+    amount: false,
+  });
+  const handleChange = (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+    setInputError({ ...inputError, [e.target.name]: false });
+  };
+
   return (
     <div className="max-w-[43vw] mx-auto bg-white rounded-lg mt-6 p-4 pr-8 pl-8 text-black">
       <div className="mb-3">
@@ -15,7 +32,11 @@ const AirtimeForm = ({selectedUser}) => {
       <div className="flex gap-4 justify-between mb-3">
         <div className="w-full">
           <p className="font-bold">Network Provider</p>
-          <select className="border rounded-md bg-transparent p-2 w-full">
+          <select
+            className="border rounded-md bg-transparent p-2 w-full"
+            name="networkProvider"
+            onChange={handleChange}
+          >
             <option>Select network provider</option>
             {AirtimeList.map((network, key) => (
               <option key={key}>{network.name}</option>
@@ -28,6 +49,8 @@ const AirtimeForm = ({selectedUser}) => {
             className="w-full border rounded-md bg-transparent p-2"
             placeholder="Enter Account Number"
             type="number"
+            name="phoneNumber"
+            onChange={handleChange}
           />
         </div>
       </div>
@@ -37,6 +60,9 @@ const AirtimeForm = ({selectedUser}) => {
           className="border rounded-md bg-transparent p-2 w-full"
           placeholder="Enter transfer amount"
           type="number"
+          name="amount"
+          onChange={handleChange}
+          value={input.amount}
         />
       </div>
       <div className="flex items-center justify-center mt-4 mb-2">
