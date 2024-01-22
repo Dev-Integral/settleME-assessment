@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AirtimeList } from "../utils/AirtimeProviders";
+import axios from "axios";
 
 const AirtimeForm = ({ selectedUser }) => {
   const [input, setInput] = useState({
@@ -19,14 +20,48 @@ const AirtimeForm = ({ selectedUser }) => {
     setInputError({ ...inputError, [e.target.name]: false });
   };
 
+  const validateInputs = () => {
+    let instance = {};
+    let isInvalid = [];
+    Object.keys(input).forEach((field) => {
+      if (!input[`${field}`]) {
+        instance[`${field}`] = true;
+        isInvalid.push(field);
+        setInputError(instance);
+      }
+    });
+    return isInvalid.length > 0 ? false : true;
+  };
+
+  const handleSubmit = () => {
+    const postData = { ...input };
+    let isReady = validateInputs();
+    console.log(input);
+    if (isReady) {
+      axios
+        .post("https://jsonplaceholder.typicode.com/posts", postData)
+        .then(() => {
+          setInput({});
+          alert(
+            `Airtime purchase successful`
+          );
+        })
+        .catch(() => alert("Unable to transfer to recipient."));
+    } else {
+      alert("INVALID FORM FIELD(S)");
+    }
+  };
+
   return (
     <div className="max-w-[43vw] mx-auto bg-white rounded-lg mt-6 p-4 pr-8 pl-8 text-black">
       <div className="mb-3">
         <p className="font-bold">Source Account</p>
-        <select className="border rounded-md bg-transparent p-2 w-full">
-          <option value={""}>select Account</option>
-          <option value={"personal"}>main Account - #500,000</option>
-          <option value={"business"}>sub Account - #1,000,000</option>
+        <select className="border rounded-md bg-transparent p-2 w-full" name="sourceAccount" onChange={handleChange}>
+          <option value={""}>Select Account</option>
+          <option value={selectedUser.accountNumber}>
+            Account Balance - ₦
+            {Number(selectedUser.balance).toLocaleString("en-US")}
+          </option>
         </select>
       </div>
       <div className="flex gap-4 justify-between mb-3">
@@ -62,11 +97,13 @@ const AirtimeForm = ({ selectedUser }) => {
           type="number"
           name="amount"
           onChange={handleChange}
-          value={input.amount}
         />
       </div>
       <div className="flex items-center justify-center mt-4 mb-2">
-        <button className="border p-3 w-40 rounded-full bg-[#303030] text-white hover:bg-[#aeaeae]">
+        <button
+          onClick={handleSubmit}
+          className="border p-3 w-40 rounded-full bg-[#303030] text-white hover:bg-[#aeaeae]"
+        >
           Submit
         </button>
       </div>
